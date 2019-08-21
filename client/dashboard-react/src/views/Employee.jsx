@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Grid, Row, Col } from "react-bootstrap";
-import { MDBDataTable } from 'mdbreact';
+import { MDBTable, MDBTableHead, MDBTableBody, MDBDataTable } from 'mdbreact';
 import Modal from 'react-responsive-modal';
 import axios from 'axios';
 import { any } from "prop-types";
@@ -255,21 +255,23 @@ class Employee extends Component {
                   hover
                   data={data}
                 /> */}
-                <table className="table table-bordered" style={{ marginTop: '25px' }}>
-                  <thead style={{ backgroundColor: "#343a40", color: "white"}}>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>NIC</th>
-                    <th>Address</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Salary</th>
-                    <th>Employee Type</th>
-                    <th>Username</th>
-                    <th>Password</th>
-                    <th>Options</th>
-                  </thead>
-                  <tbody>
+                <MDBTable>
+                  <MDBTableHead>
+                    <tr>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>NIC</th>
+                      <th>Address</th>
+                      <th>Email</th>
+                      <th>Phone Number</th>
+                      <th>Salary</th>
+                      <th>Employee Type</th>
+                      <th>Username</th>
+                      <th>Password</th>
+                      <th>Options</th>
+                    </tr>
+                  </MDBTableHead>
+                  <MDBTableBody>
                     {
                       this.state.employees.map(emp => {
                         return (
@@ -292,8 +294,8 @@ class Employee extends Component {
                         )
                       })
                     }
-                  </tbody>
-                </table>
+                  </MDBTableBody>
+                </MDBTable>
               </div>
             </div>
             <Modal open={opencoursecreate} onClose={this.onCloseModal1} center>
