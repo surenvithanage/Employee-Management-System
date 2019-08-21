@@ -6,6 +6,7 @@ const express = require('express'),
 
 const app = express();
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 // importing routes
 const customerRoutes = require('./customer.js');
@@ -13,6 +14,9 @@ const customerRoutes = require('./customer.js');
 // settings
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
+
+// Setting up cors
+app.use(cors());
 
 // middlewares
 app.use(morgan('dev'));
