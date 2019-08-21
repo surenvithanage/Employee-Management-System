@@ -43,6 +43,7 @@ controller.edit = (req, res) => {
 controller.update = (req, res) => {
   const { id } = req.params;
   const newCustomer = req.body;
+  console.log(JSON.stringify(newCustomer));
   req.getConnection((err, conn) => {
 
   conn.query('UPDATE customer set ? where id = ?', [newCustomer, id], (err, rows) => {

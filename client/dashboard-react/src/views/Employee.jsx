@@ -1,9 +1,11 @@
-import React, { Component } from "react";
+import React, { Component, useRef } from "react";
 import { Grid, Row, Col } from "react-bootstrap";
 import { MDBTable, MDBTableHead, MDBTableBody, MDBDataTable } from 'mdbreact';
 import Modal from 'react-responsive-modal';
 import axios from 'axios';
 import { any } from "prop-types";
+import ReactToPrint from 'react-to-print';
+
 
 class Employee extends Component {
   constructor() {
@@ -28,17 +30,12 @@ class Employee extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
   }
 
   handleInputChange(e) {
     this.setState({
       [e.target.name]: e.target.value
     })
-  }
-
-  handleDelete(e) {
-    e.preventDefault();
   }
 
   handleUpdate(e) {
@@ -55,7 +52,7 @@ class Employee extends Component {
       username: this.state.username,
       password: this.state.password
     }
-    axios.put('http://localhost:3000/customers/update/' + this.state._id, employee)
+    axios.put('http://localhost:3000/customers/update/' + this.state.id, employee)
       .then(res => alert('Successfully Updated Employee : ' + res))
       .catch(err => {
         alert('Error Updating Employee : ' + err)
@@ -77,12 +74,11 @@ class Employee extends Component {
       username: this.state.username,
       password: this.state.password
     }
-    axios.post('http://localhost:3000/customers/create', employee)
+    axios.post('http://localhost:3000/customers/insert', employee)
       .then(res => alert('Successfully Created Employee : ' + res))
       .catch(err => {
         alert('Error Creating Employee : ' + err)
       });
-    this.componentDidMount();
   }
 
   componentDidMount() {
@@ -114,14 +110,14 @@ class Employee extends Component {
     )
   }
 
-  deleteCourse(courseid) {
-    axios.delete('http://localhost:3000/customers/delete/' + courseid).then(
+  deleteEmployee(employeeid) {
+    axios.delete('http://localhost:3000/customers/delete/' + employeeid).then(
       data => {
-        alert("CONFIRM TO DELETE THIS RECORD");
+        console.log('DELETE RESPONSE : ' + JSON.stringify(data));
         this.componentDidMount();
       },
       err => {
-        alert(JSON.stringify(err));
+        console.log('DELETE RESPONSE ERROR : ' + JSON.stringify(err));
       }
     )
   }
@@ -132,13 +128,15 @@ class Employee extends Component {
 
   onCloseModal1 = () => {
     this.setState({ opencoursecreate: false });
+    this.componentDidMount();
   };
 
   onOpenModal = (id) => {
-    axios.get('http://localhost:3000/customers/edit/' + id).then(
+    axios.get('http://localhost:3000/customers/update/' + id).then(
       data => {
+        console.log('FIND RESPONSE : ' + JSON.stringify(data));
         this.setState({
-          id: data.data._id,
+          id: data.data.id,
           firstname: data.data.firstname,
           lastname: data.data.lastname,
           nic: data.data.nic,
@@ -157,6 +155,7 @@ class Employee extends Component {
 
   onCloseModal = () => {
     this.setState({ opencourseupdate: false });
+    this.componentDidMount();
   };
 
   render() {
@@ -243,18 +242,17 @@ class Employee extends Component {
               </div>
               <hr />
               <div className="row">
-                <div className="col-md-10"></div>
+                <div className="col-md-6">
+                </div>
+                <div className="col-md-2">
+                <button className="btn btn-primary" onClick={() => window.print()}>Generate Report</button>
+                </div>
+                <div className="col-md-2"></div>
                 <div className="col-md-2">
                   <button className="btn btn-primary" onClick={this.onOpenModal1}>Create New Employee</button>
                 </div>
               </div>
               <div className="row">
-                {/* <MDBDataTable
-                  striped
-                  bordered
-                  hover
-                  data={data}
-                /> */}
                 <MDBTable>
                   <MDBTableHead>
                     <tr>
@@ -288,7 +286,7 @@ class Employee extends Component {
                             <td>{emp.password}</td>
                             <td>
                               <button className="btn btn-warning btn-sm" onClick={this.onOpenModal.bind(this, emp.id)} style={{ marginRight: '15px' }}> EDIT </button>
-                              <button className="btn btn-danger  btn-sm" onClick={this.deleteCourse.bind(this, emp.id)}> DELETE </button>
+                              <button className="btn btn-danger  btn-sm" onClick={this.deleteEmployee.bind(this, emp.id)}> DELETE </button>
                             </td>
                           </tr>
                         )
@@ -543,5 +541,18 @@ class Employee extends Component {
     );
   }
 }
+
+const Example = () => {
+  const componentRef = useRef();
+  return (
+    <div>
+      <ReactToPrint
+        trigger={() => <button>Print this out!</button>}
+        content={() => componentRef.current}
+      />
+      <Employee ref={componentRef} />
+    </div>
+  );
+};
 
 export default Employee;
